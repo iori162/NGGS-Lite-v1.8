@@ -1,0 +1,713 @@
+NGGS-Lite v1.8 (Gemini Edition) User Guide
+
+NGGS-Lite Project Directory: /Users/user/Desktop/NGGS＿Project/
+Table of Contents (Planned)
+1 System Overview
+2 Features and Improvements of NGGS-Lite v1.8
+3 Installation and Setup
+4 Basic Usage
+5 Advanced Settings and Customization
+6 Output Files and Structure
+7 Integration Features (NDGS Input, GLCAI Vocabulary Feedback)
+8 Troubleshooting
+
+NGGS-Lite v1.8 System Overview
+1.1 A New Gothic Style Pursuing "Ontological Tremor"
+NGGS-Lite (Neo-Gothic Text Generation System - Lite) v1.8 is an AI system that utilizes the Google Gemini API to generate high-quality Gothic-style text imbued with an "ontological tremor." Ontological tremor refers to a profound experience where the boundaries of self-awareness and reality waver, aiming to leave a strong impression and deep resonance with the reader.
+This system goes beyond simple text generation; it pursues a higher quality Gothic style by multi-dimensionally evaluating the generated text and iteratively making improvements based on those evaluation results.
+1.2 Key Evaluation Metrics
+NGGS-Lite v1.8 evaluates the quality of generated text using the following key metrics:
+
+ETI (Existential Tremor Index - Extended Ontological Tremor Index):
+LLM Evaluation Items: Items related to Gothic-ness directly evaluated by the LLM (e.g., Gothic atmosphere, solemnity of style, indirect emotional expression, quality of vocabulary).
+ETI Components (v1.8 definition): Liminality, Ambiguity, Transcendental Violation, Uncertainty, Internal Transformation.
+Heuristic Evaluation: Naturalness of phase transition, depth of subjectivity.
+These scores are comprehensively evaluated to calculate the ETI total score.
+RI (Readability Index):
+Evaluates the readability and artistry of the text from a_new__gothic_style_pursuing_the perspectives such as structural clarity, visual rhythm, emotional flow, cognitive processing load, and interpretive resonance.
+Subjectivity Score:
+Measures the quality of subjective narration by heuristically evaluating the frequency/distribution of first-person pronouns, frequency/diversity of internal expressions, quality of monologues, and consistency of viewpoint.
+Layer/Phase Balance Scores:
+Layer Distribution: Analyzes and evaluates the descriptive balance of material, sensory, psychological, and symbolic layers within the text.
+Phase Distribution: Evaluates the distribution and naturalness of transitions between narrative phases such as dialogue, live commentary, monologue, and narration.
+Emotion Arc Score:
+Evaluates whether the overall emotion of the story effectively transforms along a set emotional arc (e.g., "unease -> fear -> revelation").
+Colloquial/Gothic Blend Score:
+Evaluates whether colloquial expressions and Gothic literary expressions are naturally and effectively blended according to the set colloquial level (high, medium, low). 1.3 Key Features of NGGS-Lite
+LLM Integration (Gemini): High-quality text generation and evaluation using the Google Gemini API.
+Iterative Improvement Loop: Executes a cycle of evaluating generated text with the above metrics, generating improvement instructions based on the results, and regenerating the text.
+Detailed Evaluation System: Multi-dimensional quality evaluation combining LLM evaluation with multiple heuristic evaluations.
+Flexible Configuration Management: Detailed parameter settings via the NGGSConfig data class.
+Vocabulary Management System: VocabularyManager for loading external vocabulary files, filtering, suggesting vocabulary for prompts, and tracking usage.
+Narrative Structure Support: NarrativeFlowFramework for analyzing the phase/layer structure of the story and generating fragments of narrative structure prompts based on themes and emotional arcs.
+External Integration Platform:
+NDGS Input: Imports contextual information (character, scene overview, initial text, etc.) in JSON format from external systems (e.g., NDGS - Neo Dimension Gothic Scenario builder).
+GLCAI Vocabulary Feedback: Records and outputs vocabulary usage during the generation process in JSON format, contributing to future vocabulary analysis and DB enhancement by GLCAI (Gothic Lexicon Curator AI, etc.) systems.
+Batch Processing Function: Batch processing based on multiple input files or settings, and summary report generation.
+Robust Error Handling and Logging: Stable operational support through custom exceptions and detailed log output.
+Features of NGGS-Lite v1.8 and Improvements from v1.7 (Gemini Edition)
+NGGS-Lite v1.8 inherits the philosophy of v1.7, with a particular focus on optimization for the Google Gemini API, refinement of the evaluation system, and development of the external integration platform.
+
+Optimization for Gemini API:
+Full adoption of Google Gemini as the primary LLM engine (default model: models/gemini-1.5-pro-latest).
+Implementation of prompt templates, error handling, and retry logic tailored to the characteristics of the Gemini API.
+Enhancement/Adjustment of Evaluation System:
+Verified and adjusted heuristic logic for ETI, RI, and subjectivity evaluation to aim for more realistic assessments.
+Introduced derivative scores (phase score, layer balance score) to evaluate the balance of narrative structure based on the analysis results of phase distribution and layer distribution.
+Evaluation results now include the confidence level of heuristic evaluations.
+NDGS/GLCAI Integration Platform:
+NDGS Basic Parser (NDGSIntegration): Implemented a basic parser to read JSON files (character definitions, scene overviews, initial text, etc.) output from an external NDGS system and use them as the processing context for NGGS-Lite.
+GLCAI Vocabulary Feedback (GLCAIVocabularyFeedback): Implemented a function to record vocabulary usage (words, layers, categories, sources, etc.) during the text generation process and output it as a JSON file along with a job ID. This enables data collection for future vocabulary analysis and database curation in GLCAI systems, etc.
+Robust Configuration Management and Error Handling:
+Aggregated configuration items into the NGGSConfig data class and established default values.
+Clarified the processing flow in case of errors and improved stability by using a Result type and custom exception classes (NGGSError, LLMError, FileProcessingError, etc.).
+Batch Processing Function (BatchProcessor):
+Implemented a function to process multiple input text files in a batch, generating individual processing results (JSON, HTML report, final text) and a summary report for the entire batch (JSON, HTML).
+Introduced basic parallel processing options using concurrent.futures to reduce processing time for large numbers of files.
+Other Improvements:
+Strengthened logic for loading and validating prompt templates.
+Expanded command-line arguments and implemented overriding of NGGSConfig based on arguments.
+Established the foundation for HTML report generation (conceptualization of batch summaries and individual job reports). Detailed HTML report implementation may be beyond the scope of v1.8.
+Consistent use of UTF-8 encoding.
+Enhanced logging functionality (UTC timestamps, rotation, detailed context information).
+
+NGGS-Lite Project Directory: /Users/user/Desktop/NGGS＿Project/
+3. Installation and Setup
+Several preparations are necessary to use NGGS-Lite v1.8. The following explains the system requirements, installation of necessary libraries, API key configuration, and arrangement of related files.
+3.1 System Requirements
+* Python: Python 3.8 or higher (Python 3.9 or higher recommended). 
+* NGGS-Lite v1.8 utilizes relatively new Python features such as dataclasses, pathlib, and typing. 
+* OS: Confirmed to work (or expected to work) on Windows 10/11, macOS 10.15 or later, Linux (such as Ubuntu 20.04 LTS or later). 
+* Memory: Minimum 2GB (4GB or more recommended for comfortable operation). 
+* More memory may be required when processing large texts or executing multiple improvement loops. 
+* Disk Space: Minimum 1GB of free space. 
+* Used to store generated text, log files, vocabulary files, and temporary files.  More space will be needed for batch processing depending on the number of files to be processed. 
+* API Keys:
+* Google Gemini API Key: Essential for text generation and evaluation.  Please obtain it from Google AI Studio or similar. 
+* OpenAI API Key (Optional): In NGGS-Lite v1.8, OpenAI functionality is a placeholder and is not actively supported. 
+3.2 Required Libraries and Installation Method
+The following Python library is required to run NGGS-Lite v1.8.
+1 google-generativeai: The official library for using the Google Gemini API. 
+Install it by running the following command in your terminal or command prompt.
+Bash
+
+Bash
+
+pip install google-generativeai
+A specific version (e.g., 0.3.0 or higher) may be required.  Installing the latest stable version is recommended. 
+NGGS-Lite v1.8 also utilizes many other Python standard libraries (e.g., os, sys, json, argparse, logging, re, random, pathlib, etc.), but these are usually included with a Python installation. 
+3.3 API Key Configuration
+NGGS-Lite v1.8 requires the API key to be set as an environment variable to use the Gemini API. 
+* Gemini API Key:
+* Environment Variable Name: GENAI_API_KEY 
+* Setting Example (Linux/macOS): Bash export GENAI_API_KEY="Enter_your_Gemini_API_key_here" 
+* Setting Example (Windows PowerShell): PowerShell $env:GENAI_API_KEY="Enter_your_Gemini_API_key_here" 
+* Setting Example (Windows Command Prompt): Bash set GENAI_API_KEY=Enter_your_Gemini_API_key_here 
+* For persistent settings, please follow the environment variable setting method for your OS (e.g., .bashrc, .zshrc, system environment variable settings panel, etc.). 
+3.4 Preparing Configuration Files (Optional)
+NGGS-Lite v1.8 manages core settings within the NGGSConfig data class in the script, and many operations can be controlled via command-line arguments. 
+In the current version, the functionality to load all settings from an external configuration file (e.g., YAML or JSON format) is limited (NGGSConfig.load_from_file exists as a basic placeholder, but command-line arguments primarily take precedence). 
+If you frequently make detailed customizations or changes to default values, you can consider one of the following methods:
+1 Editing the NGGSConfig class directly in the script:
+* Change the default values in the NGGSConfig class definition within the /Users/user/Desktop/NGGS＿Project/nggs_lite_v1.8.py file.  However, be aware that changes may be overwritten when the script is updated. 
+2 Actively using command-line arguments:
+* Specify settings at runtime with arguments such as --loops, --length, --model.  Details of available arguments can be confirmed with -h or --help. 
+3 (Advanced users) Using custom JSON configuration files:
+* Anticipating future enhancement of external configuration file support, it is possible to create a JSON file corresponding to the NGGSConfig parameters and modify the script to load it.  Currently, this method is not standardly supported. 
+The settings required for basic operation are the API key configuration and the file arrangement described later. 
+3.5 Required Directory Structure and File Arrangement
+When running NGGS-Lite v1.8 in the /Users/user/Desktop/NGGS＿Project/ directory, the following directory structure and file arrangement are recommended. 
+
+
+/Users/user/Desktop/NGGS＿Project/
+├── nggs_lite_v1.8.py                     # Main script
+│
+├── templates_v1.8/                       # Directory for prompt templates (config.DEFAULT_TEMPLATES_DIR)
+│   ├── generation.txt                    # Template for initial generation (if customizing) [cite: 3, 4]
+│   ├── evaluation.txt                    # Template for LLM evaluation (if customizing) [cite: 3, 4]
+│   └── improvement.txt                   # Template for generating improvement instructions (if customizing) [cite: 3, 4]
+│
+├── data/                                 # Directory for data such as vocabulary files [cite: 5]
+│   ├── gothic_vocabulary_v1.8.json       # NGGS-Lite default vocabulary file (config.DEFAULT_VOCAB_PATH) [cite: 5]
+│   └── glcai_export_latest.json          # (Optional) Vocabulary file exported from GLCAI (config.GLCAI_VOCAB_PATH) [cite: 5]
+│
+├── nggs_lite_output_v1.8/                # Default output directory (config.DEFAULT_OUTPUT_DIR)
+│   │                                     # (Automatically generated when the script is run)
+│   ├── <job_id>/                         # Output results for each job are saved here [cite: 5, 6]
+│   │   ├── <job_id>_results.json         # Detailed results (JSON) [cite: 6]
+│   │   ├── <job_id>_report.html          # HTML format report (limited in v1.8) [cite: 6]
+│   │   └── <job_id>_final.txt            # Final generated text [cite: 6]
+│   │
+│   ├── glcai_feedback/                   # GLCAI vocabulary feedback file storage (config.GLCAI_FEEDBACK_DIR_NAME) [cite: 6, 7]
+│   ├── resume/                           # Resume information storage (config.RESUME_DIR_NAME) [cite: 7]
+│   ├── stats/                            # Statistics information storage (config.STATS_DIR_NAME) [cite: 7]
+│   └── _batch_summary_report.json        # (Batch processing) Batch summary report (JSON) [cite: 7]
+│   └── _batch_summary_report.html        # (Batch processing) Batch summary report (HTML) [cite: 7, 8]
+│
+└── logs/                                 # (Recommended) Directory for storing log files
+    └── nggs_lite_v1_8.log                # Log file (config.DEFAULT_LOG_FILE) [cite: 8, 9]
+                                        # Specify as --log-file logs/nggs_lite_v1_8.log [cite: 9]
+Notes on file arrangement: 
+* Script (nggs_lite_v1.8.py): Place it in the project root mentioned above. 
+* Template Files:
+* The NGGS-Lite v1.8 script has default prompt templates embedded within it. 
+* If you wish to customize these templates, create the /Users/user/Desktop/NGGS＿Project/templates_v1.8/ directory and place text files with the same names (generation.txt, evaluation.txt, improvement.txt) in it.  The script will first try to read these external files. 
+* The template location can be changed with the command-line argument --templates. 
+* Vocabulary Files:
+* The NGGS-Lite v1.8 script has a basic default layered vocabulary (DEFAULT_LAYERED_VOCABULARY) embedded within it. 
+* To use a richer vocabulary, you can place the following JSON files in the /Users/user/Desktop/NGGS＿Project/data/ directory. 
+* gothic_vocabulary_v1.8.json: NGGS-Lite standard format vocabulary file. 
+* glcai_export_latest.json: Vocabulary file in the format exported from the GLCAI system. 
+* Vocabulary loading priority follows config.VOCAB_LOAD_PRIORITY (default: GLCAI file > NGGS default file > internal default). 
+* The paths for these vocabulary files can be changed with the command-line arguments --nggs-vocab and --glcai-vocab. 
+* Output Directory:
+* By default, the nggs_lite_output_v1.8/ directory will be created directly under the location where the script is executed (in this example, /Users/user/Desktop/NGGS＿Project/), and processing results will be saved within it. 
+* The output destination can be changed with the command-line argument --output. 
+* Log File:
+* By default, nggs_lite_v1_8.log is generated in the script execution location. 
+* The log file path and rotation settings are defined in NGGSConfig and can be adjusted with command-line arguments like --log-file or --verbose. 
+* It is recommended to create a /Users/user/Desktop/NGGS＿Project/logs/ directory and specify --log-file logs/nggs_lite_v1_8.log to manage log files collectively. 
+
+Okay, here is Part 3 of the translation:
+
+NGGS-Lite Project Directory: /Users/user/Desktop/NGGS＿Project/
+4. Basic Usage
+NGGS-Lite v1.8 is operated via a command-line interface. This section explains the main execution methods and basic command-line parameters.
+4.1 Single Job Execution Command
+This is the basic command format for processing a single input text.
+Example 1: Executing by specifying a text file
+Bash
+
+Bash
+
+python /Users/user/Desktop/NGGS＿Project/nggs_lite_v1.8.py \
+    --input /Users/user/Desktop/NGGS＿Project/my_input_text.txt \
+    --output /Users/user/Desktop/NGGS＿Project/nggs_lite_output_v1.8/my_job_01 \
+    --loops 3 \
+    --length 1500 \
+    --perspective subjective_first_person \
+    --log-file /Users/user/Desktop/NGGS＿Project/logs/nggs_lite_v1_8.log \
+    -vv
+* `/Users/user/Desktop/NGGS＿Project/nggs_lite_v1.8.py`: Path to the script itself.
+* `--input`: Path to the input text file to be processed.
+* `--output`: Path to the directory where results (generated text, evaluation report, etc.) will be saved. If not specified, a default output directory (e.g., `./nggs_lite_output_v1.8/`) will be created in the script's execution location.
+* `--loops`: Maximum number of improvement loops.
+* `--length`: Approximate target character count for the generated text.
+* `--perspective`: Viewpoint mode for the generated text.
+* `--log-file`: Output destination for the log file.
+* `-vv`: Sets the log verbosity to debug level (v: INFO, vv: DEBUG). [cite: 9]
+Example 2: Executing by specifying text directly from the command line
+Bash
+
+Bash
+
+python /Users/user/Desktop/NGGS＿Project/nggs_lite_v1.8.py \
+    --text "In the study of the old mansion, he opened the forbidden book. Moonlight streamed through the dusty window, and strange shadows danced on the wall." \
+    --output /Users/user/Desktop/NGGS＿Project/nggs_lite_output_v1.8/my_job_02 \
+    --loops 1 \
+    --threshold 4.0
+* `--text`: Specifies the text to be processed directly as a string.
+* `--threshold`: If this score (overall evaluation) or higher is achieved, the improvement loop will end early.
+4.2 Batch Processing Execution Command
+Processes multiple text files (defaults to *.txt) within a specified directory in a batch.
+Bash
+
+Bash
+
+python /Users/user/Desktop/NGGS＿Project/nggs_lite_v1.8.py \
+    --batch /Users/user/Desktop/NGGS＿Project/my_batch_input_texts/ \
+    --output /Users/user/Desktop/NGGS＿Project/nggs_lite_output_v1.8/my_batch_run_01 \
+    --loops 2 \
+    --max-workers 4 \
+    --no-individual-results \
+    --log-file /Users/user/Desktop/NGGS＿Project/logs/nggs_lite_batch.log
+* `--batch`: Path to the input directory containing the text files for batch processing. [cite: 10]
+    * NGGS-Lite v1.8's BatchProcessor, by default, processes *.txt files in the specified directory. (Pattern specification via command-line argument is not supported in v1.8). [cite: 10]
+* `--max-workers`: Specifies the maximum number of worker (threads) for parallel processing. If 1, processing will be sequential. [cite: 10]
+* `--no-individual-results`: Suppresses the saving of detailed result files (JSON, HTML, final text) for individual input files during batch processing. Only the batch summary report will be output. [cite: 10]
+4.3 Explanation of Key Command-Line Parameters
+The following are the main command-line arguments available in NGGS-Lite v1.8. Default values can be confirmed in the NGGSConfig class definition within the script or by using the --help option.
+
+Parameter	Short Form	Description	Default Example (NGGSConfig)
+Input/Output Related			
+--input <file_path>	-i	In single mode, the input text file to process (UTF-8). (Not mandatory, exclusive with other input formats)	
+--text "<string>"	-t	In single mode, the input text string to process. (Not mandatory, exclusive with other input formats)	
+--batch <input_dir> 	-b	In batch mode, the input directory containing the files to process. (Not mandatory, exclusive with other input formats)	
+--ndgs-input <ndgs_json_file>	-n	(Optional) Path to the NDGS output JSON file. If specified, this becomes the primary input source and is used as the initial context.	(Optional)
+--output <output_dir>	-o	Output directory to save results.	./nggs_lite_output_v1.8
+Core Parameters			
+--loops <0-10>	-l	Maximum number of improvement loops. Specifying 0 executes only initial generation (or initial evaluation).	3
+--length <int>		Approximate target character count for the generated text.	1200
+--threshold <0.0-5.0>		If this overall evaluation score or higher is achieved, the improvement loop will end early.	4.3
+File Path Related			
+--templates <dir_path>		Path to the directory containing prompt templates.	./templates_v1.8
+--nggs-vocab <file_path>		Path to the NGGS-Lite default vocabulary JSON file.	./data/gothic_vocabulary_v1.8.json
+--glcai-vocab <file_path>		(Optional) Path to the vocabulary JSON file exported from GLCAI.	./data/glcai_export_latest.json
+Style Control			
+--perspective <mode>		Viewpoint mode. Choices: subjective_first_person, perspective_shift, dream_perspective, objective.	subjective_first_person
+--phase-focus <phase>		Narrative phase to emphasize. Choices: balanced, serif, monologue, narration, live_report.	balanced
+--colloquial-level <level>		Level of colloquial expression. Choices: high, medium, low.	medium
+--emotion-arc "<arc_string>"		Target emotional arc (e.g., "unease->fear->revelation").	Not specified
+LLM Engine			
+--model <model_name>		Name of the LLM model to use (for Gemini).	models/gemini-1.5-pro-latest
+Execution Mode			
+--skip-initial-generation	--skip-gen	Skips initial text generation and directly evaluates/improves the provided input text.	(Flag only, default: False)
+--max-workers <N>		Number of parallel workers for batch processing. 1 for sequential processing.	1
+--no-individual-results		In batch processing, suppresses saving individual job result files (JSON/HTML/TXT).	(Flag only, default: False)
+--mock		Mocks LLM API calls and uses dummy responses for testing. API key is not required.	(Flag only, default: False)
+Log Related			
+--verbose	-v	Increases log verbosity. -v for INFO level, -vv for DEBUG level.	(No specification for WARNING and above, -v for INFO)
+--log-file <file_path>		Output destination for the log file. Specify NONE to disable logging to a file.	nggs_lite_v1_8.log
+
+4.4 Example of Execution Using an NDGS Input File
+NGGS-Lite v1.8 can accept a JSON file output from an external system like NDGS (Neo Dimension Gothic Scenario builder) as input and use the context information contained within (character, scene overview, initial text, etc.) to start processing. 
+Bash
+
+Bash
+
+python /Users/user/Desktop/NGGS＿Project/nggs_lite_v1.8.py \
+    --ndgs-input /Users/user/Desktop/NGGS＿Project/my_ndgs_scenario.json \
+    --output /Users/user/Desktop/NGGS＿Project/nggs_lite_output_v1.8/my_ndgs_job_01 \
+    --loops 4 \
+    --log-file /Users/user/Desktop/NGGS＿Project/logs/nggs_lite_ndgs.log
+* `--ndgs-input`: Path to the JSON file output from NDGS. [cite: 11]
+* When using this option, it is not necessary to specify initial text separately with `--input` or `--text`. If the NDGS file contains initial text information, it will be used; if not, initial generation will be attempted based on character and scene information, or an error will occur (depending on the implementation of the `TextProcessor.process` method in v1.8). [cite: 11]
+* Parameters within the NDGS file (e.g., viewpoint mode) may override similar parameters specified by command-line arguments. [cite: 11]
+4.5 Regarding the Resume Feature
+The design of NGGS-Lite v1.8 includes considerations for interrupting and resuming processing. Specifically, a subdirectory named resume is expected to be created in the output directory, where resume information based on the job ID will be saved.
+However, the main development scope of v1.8 was focused on adjusting evaluation logic, Gemini compatibility, and implementing basic external integration features. An advanced resume feature that performs detailed state saving and restoration for each step of the iterative improvement loop is currently limited or is a future enhancement point.
+Currently expected behavior:
+* Result separation by job ID: Each process (single job or individual file processing within a batch) is assigned a unique job ID, and output results are saved in a subdirectory based on this job ID, so results from past jobs are not unintentionally overwritten.
+* Tracking via logs: Detailed logs are output, so it is possible to check how far processing had progressed.
+Currently likely unsupported:
+* A feature to automatically resume only unprocessed files if batch processing is interrupted.
+* A feature to precisely resume from a specific step of an improvement loop if a single job is interrupted mid-loop.
+If you want to resume an interrupted job, re-running the command with the same parameters (especially settings related to the output directory or job ID) may result in the previous output being processed as a new result without overwriting, or it may cause an error. For safety, if a job is interrupted, it is recommended to check the output directory and manually adjust if necessary, or specify a new output directory and re-run.
+4.6 Using Mock Mode
+Using the --mock option, NGGS-Lite v1.8 will operate in "mock mode," where it does not make actual LLM API calls but returns predefined dummy responses. 
+Bash
+
+Bash
+
+python /Users/user/Desktop/NGGS＿Project/nggs_lite_v1.8.py \
+    --text "This is a test input for mock mode." \
+    --mock \
+    --loops 1
+This mode is useful in the following cases:
+* If you do not have an API key or do not want to consume API usage quotas.
+* If you want to check the basic operational flow of the entire script (parameter processing, calling evaluation logic, result aggregation, etc.).
+* For basic validation of prompt templates.
+In mock mode, when the LLMClient is initialized, dummy generation functions are set up by the _setup_mock method. These dummy functions return different types of fixed responses (dummy JSON evaluation, dummy improvement instruction text, standard dummy text) depending on the content of the prompt (e.g., keywords like "evaluation," "improvement instruction"). Therefore, it will not generate diverse output or high-quality text like an actual LLM, but it is sufficient for testing the system's framework.
+
+Okay, here is Part 4 of the translation:
+
+NGGS-Lite Project Directory: /Users/user/Desktop/NGGS＿Project/
+5. Advanced Settings and Customization
+NGGS-Lite v1.8 operates based on default settings defined in the NGGSConfig data class within the script, but its behavior can be finely customized through command-line arguments or specific external files.
+5.1 Explanation of Key Parameters in NGGSConfig
+The NGGSConfig class (defined within the nggs_lite_v1.8.py script) contains numerous parameters for controlling the system's operation. The main ones are explained here. These default values can be changed by directly editing the script if necessary, or primarily overridden by command-line arguments.
+5.1.1 LLM Engine Settings (Gemini API Related)
+* LLM_ENGINE: The LLM engine to use. In v1.8, this is mainly "gemini".
+* GEMINI_API_KEY_ENV: Environment variable name from which to read the Gemini API key (default: "GENAI_API_KEY").
+* GEMINI_API_KEY: The API key read from the environment variable.
+* GEMINI_MODEL_NAME: The Gemini model name to use (default: "models/gemini-1.5-pro-latest"). Can be changed with the --model command-line argument.
+* GEMINI_RPM_LIMIT: Maximum requests per minute (default: 30). Used to comply with API rate limits.
+* API Retry/Timeout Settings:
+* API_MAX_RETRIES: Maximum retry attempts on API call failure (default: 4).
+* API_BASE_RETRY_DELAY: Initial retry delay in seconds (default: 1.5).
+* API_MAX_RETRY_DELAY: Maximum retry delay in seconds (default: 45.0).
+* API_TIMEOUT: API call timeout in seconds (default: 300).
+5.1.2 Generation Parameters
+* GENERATION_CONFIG_DEFAULT: Default generation parameters for the Gemini model.
+* "temperature": Randomness of generation (default: 0.80). Higher values produce more diverse output; lower values produce more predictable output.
+* "top_p": Top-p sampling value for token selection (default: 0.95).
+* "top_k": Top-k sampling value for token selection (default: 40).
+* "max_output_tokens": Maximum number of output tokens (default: 8192).
+* EVALUATION_TEMPERATURE: Temperature for LLM evaluation prompts (default: 0.20). Set lower to increase objectivity of evaluation.
+* Temperature settings during improvement loops:
+* IMPROVEMENT_BASE_TEMPERATURE: Base temperature at the start of improvement loops (default: 0.70).
+* IMPROVEMENT_MIN_TEMPERATURE: Minimum temperature during improvement loops (default: 0.55).
+* IMPROVEMENT_TEMP_DECREASE_PER_LOOP: Temperature decrease amount per loop (default: 0.05).
+5.1.3 Text Generation/Evaluation Control
+* DEFAULT_TARGET_LENGTH: Approximate target character count for the text (default: 1200). Can be changed with the --length command-line argument. 
+* DEFAULT_MAX_LOOPS: Maximum number of improvement loops (default: 3). Can be changed with the --loops command-line argument. 
+* DEFAULT_IMPROVEMENT_THRESHOLD: If this overall evaluation score or higher is achieved, the improvement loop will end early (default: 4.3). Can be changed with the --threshold command-line argument. 
+5.1.4 ETI (Extended Existential Tremor Index) Evaluation Weights
+* EXTENDED_ETI_WEIGHTS: Weighting for each component of ETI (Liminality, Ambiguity, Transcendental Violation, Uncertainty, Internal Transformation, Phase Transition, Subjectivity) in the final score calculation. Python # Default example in NGGSConfig
+* EXTENDED_ETI_WEIGHTS: Dict[str, float] = field(default_factory=lambda: {
+* "Liminality": 0.15, "Ambiguity": 0.15, "Transcendental Violation": 0.15,
+* "Uncertainty": 0.15, "Internal Transformation": 0.15,
+* "Phase Transition": 0.15, # Heuristic evaluation
+* "Subjectivity": 0.10 # Heuristic evaluation
+* })
+* These weights can be changed to adjust which aspects of ETI are emphasized. It is recommended to adjust them so that the sum is 1.0, but this is not mandatory (the score will eventually be normalized/clamped to a 0-5 range).
+5.1.5 Layer/Phase Balance Target Values and Scoring Parameters
+* Phase Balance Related (PHASE_):
+* PHASE_BALANCE_TARGETS: Target occurrence ratios for each narrative phase (dialogue, live commentary, monologue, etc.).
+* PHASE_DEVIATION_TOLERANCE: Allowable deviation range from target ratios.
+* PHASE_SCORE_DIVERSITY_BONUS: Diversity bonus coefficient when multiple phases are present.
+* PHASE_SCORE_BALANCE_PENALTY_FACTOR: Penalty coefficient for deviation from targets.
+* PHASE_SCORE_FOCUS_TARGET_RATIO: Target ratio when focusing on a specific phase.
+* Layer Balance Related (LAYER_):
+* LAYER_BALANCE_TARGETS: Target occurrence ratios for each descriptive layer (material, sensory, psychological, symbolic).
+* LAYER_DEVIATION_TOLERANCE: Allowable deviation range from target ratios.
+* LAYER_BALANCE_PENALTY_FACTOR: Penalty coefficient for deviation from targets.
+These parameters are used in the derivative score calculations (_calculate_phase_score, _calculate_layer_balance_score) within TextProcessor.
+5.1.6 File Path and Directory Settings
+These paths are interpreted as relative paths from the project root (/Users/user/Desktop/NGGS＿Project/).
+* DEFAULT_OUTPUT_DIR: Default output directory (default: "./nggs_lite_output_v1.8"). Can be changed with the --output command-line argument.
+* DEFAULT_TEMPLATES_DIR: Directory where prompt templates are stored (default: "./templates_v1.8"). Can be changed with the --templates command-line argument.
+* DEFAULT_VOCAB_PATH: NGGS-Lite standard format vocabulary file path (default: "./data/gothic_vocabulary_v1.8.json"). Can be changed with the --nggs-vocab command-line argument.
+* GLCAI_VOCAB_PATH: GLCAI export format vocabulary file path (default: "./data/glcai_export_latest.json"). Can be changed with the --glcai-vocab command-line argument.
+* VOCAB_LOAD_PRIORITY: Loading priority for vocabulary files (default: ['glcai', 'default'], meaning GLCAI file > NGGS default file > internal default). 
+* Additionally, subdirectory names for resume (RESUME_DIR_NAME), statistics (STATS_DIR_NAME), prompt saving (PROMPT_DIR_NAME), HTML reports (HTML_REPORT_DIR_NAME), and GLCAI feedback (GLCAI_FEEDBACK_DIR_NAME) are defined. 
+5.1.7 HTML Report Settings (Limited in v1.8)
+* REPORT_CHART_COLORS: Color settings for charts used within HTML reports. HTML report functionality is limited in v1.8, but this setting is for future expansion.
+5.1.8 Logging Settings
+* LOG_LEVELS: Mapping between string log level names and logging module constants.
+* DEFAULT_LOG_LEVEL: Default log level (default: "INFO").
+* DEFAULT_LOG_FILE: Default log file name (default: "nggs_lite_v1_8.log"). Specifying NONE disables file output. Can be changed with the --log-file command-line argument.
+* LOG_FORMAT: Log format string.
+* LOG_DATE_FORMAT: Log date-time format string.
+Log level can also be controlled with command-line arguments -v (INFO), -vv (DEBUG).
+5.1.9 Other Keyword Lists
+* LAYER_KEYWORDS: List of keywords associated with each descriptive layer (material, sensory, psychological, symbolic) used in layer analysis (NarrativeFlowFramework._analyze_layer_distribution).
+* SUBJECTIVE_INNER_KEYWORDS: Keyword list used in the evaluation of internal expression (SubjectiveEvaluator._evaluate_internal_expression).
+* SUBJECTIVE_FIRST_PERSON_PRONOUNS, SUBJECTIVE_THIRD_PERSON_PRONOUNS: First-person and third-person pronoun lists used in viewpoint consistency evaluation (SubjectiveEvaluator._evaluate_consistency), etc.
+These keyword lists are directly defined in NGGSConfig within the script, and customization requires editing the relevant section of the script.
+5.2 How to Customize Prompt Templates
+NGGS-Lite v1.8 uses prompt templates in the following main processing stages:
+1 Initial text generation (generation.txt): Used when generating text for the first time.
+2 LLM-based evaluation (evaluation.txt): Used when having the LLM evaluate the generated text.
+3 Improvement instruction generation (improvement.txt): Used when having the LLM generate improvement instructions based on evaluation results, or when generating improved text.
+The default content of these templates is embedded as strings (DEFAULT_GENERATION_TEMPLATE, DEFAULT_EVALUATION_TEMPLATE, DEFAULT_IMPROVEMENT_TEMPLATE) within the script (nggs_lite_v1.8.py).
+Customization Procedure:
+1 Confirm the template directory:
+* By default, NGGS-Lite preferentially tries to load template files with the same name (e.g., generation.txt) from the /Users/user/Desktop/NGGS＿Project/templates_v1.8/ directory.
+* If this directory does not exist or the corresponding file is not present, the default template within the script is used.
+* The template directory path can be changed with the --templates command-line argument.
+2 Create custom template files:
+* Create text files (UTF-8 encoding) with the same names as the templates you want to customize within the template directory mentioned above.
+* Example: /Users/user/Desktop/NGGS＿Project/templates_v1.8/generation.txt
+3 Edit the templates:
+* Edit the created text files. It's a good idea to copy and paste the content of the default templates from the script and modify them.
+* Placeholders enclosed in curly braces {} are used within the templates. These are replaced with specific values during script execution.
+* Examples of major placeholders:
+* {input_text} or {original_text}: Input text or text to be improved.
+* {target_length}: Target character count.
+* {perspective_mode}, {phase_focus}, {colloquial_level}, {emotion_arc}: Style control parameters.
+* {vocabulary_list_str}: Suggested vocabulary list (comma-separated string).
+* {narrative_flow_section}: Instructions regarding narrative structure.
+* {generated_text}: (For evaluation) Text to be evaluated.
+* {evaluation_results_json}: (For improvement) JSON format string of the previous evaluation results.
+* {low_score_items_str}, {high_score_items_str}: (For improvement) Low/high score items.
+* {improvement_section}: (For improvement) Specific improvement instruction text.
+* A template validation function (validate_template) checks for brace balance and basic format errors but does not perform complex logic validation.
+5.3 Customizing and Using Vocabulary Files
+NGGS-Lite v1.8's VocabularyManager provides flexible vocabulary management features.
+Vocabulary Sources and Priority:
+1 GLCAI Export File (Highest priority): The JSON file specified in NGGSConfig.GLCAI_VOCAB_PATH (default: ./data/glcai_export_latest.json).  This assumes a structured vocabulary list exported from systems like GLCAI, containing detailed metadata (category, layer, usage examples, etc.).
+2 NGGS-Lite Default Vocabulary File (Medium): The JSON file specified in NGGSConfig.DEFAULT_VOCAB_PATH (default: ./data/gothic_vocabulary_v1.8.json).  This assumes NGGS-Lite's own format (e.g., word lists by layer) or a simpler format.
+3 Internal Default Vocabulary (Last resort): A basic layered vocabulary embedded in the script as DEFAULT_LAYERED_VOCABULARY. Used as a fallback if the above files are not found or cannot be read.
+These file paths can be changed using the --glcai-vocab and --nggs-vocab command-line arguments, respectively.
+Creating Custom Vocabulary Files:
+* Location: Create a /Users/user/Desktop/NGGS＿Project/data/ directory and place custom vocabulary files (e.g., gothic_vocabulary_v1.8.json) inside it.
+* JSON Format: VocabularyManager can parse the following main JSON formats:
+* Flat list: A simple string list of words. JSON ["abyss", "old castle", "moonlight", "whisper"]
+* Layer-specific dictionary: A dictionary with layer names ("physical", "sensory", "psychological", "symbolic") as keys and a list of words belonging to that layer as values. JSON { "physical": ["cobblestone", "spire"], "sensory": ["chill", "musty smell"], "psychological": ["melancholy", "madness"], "symbolic": ["mirror", "spiral staircase"] }
+* Structured list (assuming GLCAI export format): A list where each element is a dictionary containing detailed information about a vocabulary item (word, category, layer, usage example, tags, etc.). JSON [ { "word": "ontological tremor", "categories": ["ETI", "core concept"], "layers": ["psychological", "symbolic"], "example": "His words brought an ontological tremor to the listeners.", "tags": ["philosophy", "deep psychology"], "usage_count": 0, "source": "manual" }, // ... more items ]  Keys corresponding to the fields of the VocabularyItem data class (word, categories, example, tags, layers, usage_count, source) are expected. Layers can be specified as a list or set. 
+Vocabulary Item (VocabularyItem) Structure:
+* word (str): The word itself.
+* categories (List[str]): A list of categories the word belongs to (e.g., "Liminality", "Decadence").
+* example (Optional[str]): An example sentence.
+* tags (List[str]): A list of tags that can be used for filtering (e.g., "colloquial", "literary", "19th century").
+* layers (Set[str]): A set of descriptive layers the word is related to (one or more of "physical", "sensory", "psychological", "symbolic").
+* usage_count (int): The number of times used during prompt generation (used for weighted sampling).
+* source (Optional[str]): The origin of the vocabulary (e.g., "glcai", "default_file", "internal").
+This vocabulary is filtered and subjected to weighted random sampling according to context (layer, category, tags, usage frequency, etc.) via methods like VocabularyManager.get_vocabulary_for_prompt during prompt generation and included in the instructions to the LLM.
+
+NGGS-Lite Project Directory: /Users/user/Desktop/NGGS＿Project/
+6. Output Files and Structure
+When NGGS-Lite v1.8 is executed, various files such as processing results and logs are generated and saved in the specified output directory (by default, ./nggs_lite_output_v1.8/ under the project root).
+6.1 Overview of Default Output Directory Structure
+The default output directory (/Users/user/Desktop/NGGS＿Project/nggs_lite_output_v1.8/) will primarily contain the following subdirectories and files.
+
+/Users/user/Desktop/NGGS＿Project/nggs_lite_output_v1.8/
+├── <job_id_1>/                         # Results for individual jobs (single execution, or batch with individual save)
+│   ├── <job_id_1>_results.json
+│   ├── <job_id_1>_final.txt
+│   └── <job_id_1>_report.html          # (Content limited in v1.8, or link to batch summary)
+├── <job_id_2>/
+│   └── ...
+├── glcai_feedback/                     # GLCAI vocabulary feedback files
+│   └── nggs_vocab_feedback_<job_id>.json
+├── resume/                             # For saving resume information (functionality limited in v1.8)
+├── stats/                              # For saving statistical information (specific file output limited in v1.8)
+├── _batch_summary_report.json          # (Batch processing) Overall summary of batch processing (JSON)
+└── _batch_summary_report.html          # (Batch processing) Overall summary of batch processing (HTML)
+6.2 Job-Specific Output Directory (<job_id>/)
+When running a single job, or if individual result saving is enabled during batch processing (i.e., --no-individual-results is not specified), a subdirectory named with a unique job ID corresponding to each job (or each file processed in a batch) is created. Detailed results are saved within this subdirectory. 
+6.2.1 Contents of Detailed Results JSON (<job_id>_results.json)
+The processing details, parameters, text and evaluation results for each improvement loop, and final scores for each job are recorded in JSON format. This file is useful for programmatic analysis of results or for more detailed analysis. The main keys and their contents are as follows:
+* job_id (str): The unique job ID assigned to this process.
+* start_time (str): Processing start time (ISO 8601 format, UTC).
+* completion_time (str): Processing completion time (ISO 8601 format, UTC).
+* original_text_provided (str): The initial text that served as the starting point for processing (or text extracted from NDGS).
+* parameters (dict): Key configuration parameters used for this job (target length, viewpoint mode, number of loops, improvement threshold, LLM model, etc.).
+* versions (list): A list containing detailed data for each improvement loop (loop 0 is initial generation/evaluation). Each element is a dictionary with the following information:
+* loop (int): Loop number.
+* status (str): Processing status of this loop (e.g., "Success", "Failed (LLM evaluation)", "Improving").
+* text_source (str): Origin of the text (e.g., "initial_generation", "provided_initial_text", "improvement_loop").
+* text (str): The text generated or evaluated in this loop.
+* improvement_strategy (str, optional): The improvement strategy applied in this loop.
+* improvement_instructions (str, optional): The improvement instructions used in this loop.
+* llm_eval_result (dict): LLM evaluation result by Evaluator (dictionary representation of the EvaluationResult object). Includes scores, reasoning, etc.
+* eti_result (dict): ETI evaluation result by ExtendedETIEvaluator.
+* ri_result (dict): RI evaluation result by RIEvaluator.
+* subjective_result (dict): Subjectivity evaluation result by SubjectiveEvaluator. 
+* phase_distribution (dict): Analysis result of phase distribution.
+* layer_distribution (dict): Analysis result of layer distribution.
+* phase_score, layer_balance_score, emotion_arc_score, colloquial_score (float): Respective derivative scores.
+* aggregated_scores (dict): Aggregated key evaluation scores for this loop.
+* errors (list): List of recoverable errors that occurred within this loop.
+* llm_eval_success (bool): Whether the basic LLM evaluation for this loop was successful.
+* final_text (str): The final generated text with the highest evaluation after all improvement loops.
+* best_loop_index (int): The index of the loop where the best text was generated.
+* final_scores (dict): Final aggregated scores for the best_text.
+* distributions (dict): Final phase distribution and layer distribution for the best_text.
+* status (str): Overall final status of the job (e.g., "Completed (threshold achieved)", "Terminated with error").
+* errors (list): Summary list of major errors that occurred throughout the job.
+* html_report (str): (Limited in v1.8) File path or content of the generated HTML report.
+6.2.2 Final Generated Text (<job_id>_final.txt)
+If processing is successful, the version of the text with the highest evaluation is saved as a plain text file. This is the final output from NGGS-Lite.
+6.2.3 Overview of HTML Report (<job_id>_report.html)
+In NGGS-Lite v1.8, the functionality to generate detailed interactive HTML reports for individual jobs is limited. While there is a concept in TextProcessor._finalize_results to call HTML report generation, the implementation of specific generation logic (_generate_html_report) was outside the main scope of v1.8.
+Therefore, even if <job_id>_report.html is generated, its content may be a very simple summary, or in the case of batch processing, it might contain reference information to the overall batch HTML summary report. More detailed HTML report functionality is anticipated in future versions.
+6.2.4 Saved Prompts (prompts/ directory)
+NGGSConfig includes settings PROMPT_DIR_NAME (default: "prompts") and SAVE_PROMPTS (default: True). However, in the NGGS-Lite v1.8 TextProcessor implementation, specific processing to save the final prompt strings used in each loop as files in this directory has not been confirmed.
+Therefore, in v1.8, prompt file saving is likely not performed by default. If you want to check prompts for debugging or analysis, you will need to set the log level to DEBUG and obtain information from the logs, or customize the script to add saving functionality.
+6.3 GLCAI Vocabulary Feedback File (glcai_feedback/)
+NGGS-Lite v1.8 records information about the vocabulary used during the text generation process and generates a feedback file intended for integration with GLCAI (Gothic Lexicon Curator AI or similar external vocabulary management and analysis systems). 
+* Location: <output_directory>/glcai_feedback/ 
+* File name: nggs_vocab_feedback_<job_id>.json 
+* Contents:
+* job_id (str): The NGGS-Lite job ID. 
+* timestamp_utc (str): File generation time (ISO 8601 format). 
+* nggs_version (str): The version of NGGS-Lite used. 
+* vocab_usage (dict): A dictionary of used vocabulary and its information. 
+* Key: Word string. 
+* Value (dict):
+* count (int): Number of occurrences in the text. 
+* layers (list): Associated descriptive layers (e.g., ["psychological", "symbolic"]). 
+* categories (list): Associated categories. 
+* source (str, optional): Origin of the vocabulary (e.g., "glcai", "default_file"). 
+6.4 Batch Processing Summary Reports (_batch_summary_report.json, _batch_summary_report.html)
+When batch processing (--batch option) is performed, the following two summary report files are generated in the root of the specified output directory. 
+* _batch_summary_report.json: 
+* Overall statistical information for the batch process (start/end time, total processing time, number of files processed, success/failure/skip counts, etc.). 
+* The results_summary key contains a list of summaries for each file processed in the batch (file name, job ID, status, key scores, processing time, error summary, etc.). 
+* _batch_summary_report.html: 
+* Displays the above JSON summary in a human-readable HTML format. 
+* In addition to overall statistics, it displays the results for each processed file in a table format. 
+* For successful jobs, it may include links to individual job results (if saved in their subdirectories). 
+6.5 Log File (logs/nggs_lite_v1_8.log)
+Records the script's execution status, detailed processing steps, warnings, and errors. It is crucial for identifying the cause of problems when they occur. 
+* Location: By default, it is generated as nggs_lite_v1_8.log in the current directory where the script is executed. The recommended location is /Users/user/Desktop/NGGS＿Project/logs/nggs_lite_v1_8.log, which can be specified with the command-line argument --log-file /Users/user/Desktop/NGGS＿Project/logs/nggs_lite_v1_8.log. 
+* Rotation: The log file is automatically rotated when its size exceeds a certain limit (default 5MB), and old logs are kept as backup files (e.g., nggs_lite_v1_8.log.1) (up to 3 files by default). 
+* Log Level: Verbosity can be changed with command-line arguments -v (INFO level) or -vv (DEBUG level). 
+
+Okay, here is Part 6 of the translation:
+
+NGGS-Lite Project Directory: /Users/user/Desktop/NGGS＿Project/
+7. Integration Features
+NGGS-Lite v1.8 includes basic features for integration with external systems.
+7.1 Details of NDGS Input and Expected JSON Structure
+NGGS-Lite v1.8, through the NDGSIntegration class, can accept a JSON file output from an external scenario construction system (assuming NDGS: Neo Dimension Gothic Scenario builder, etc.) as input and use it as the initial context for processing.
+Expected keys and extracted information:
+* character_definitions (dict, optional): Character definition information.
+* Key: Character ID (string).
+* Value (dict):
+* name (str, optional): Character name.
+* personality_summary (str, optional) or memo (str, optional): Overview of personality or settings.
+* scene_context (dict, optional): Scene context information.
+* scene_overview (str, optional): Scene overview.
+* atmosphere (str, optional): Scene atmosphere.
+* nggs_input_text (str, optional): The main text that serves as the starting point for NGGS-Lite processing.
+* dialogue_blocks (list, optional): A list of dialogue blocks. The text key of the first element in the list may be used as an alternative to nggs_input_text.
+Example of NDGS JSON input (minimum configuration):
+JSON
+
+JSON
+
+{
+  "character_definitions": {
+    "char001": {
+      "name": "Agatha",
+      "personality_summary": "A mysterious woman trapped in an old mansion. She seeks lost memories."
+    }
+  },
+  "scene_context": {
+    "scene_overview": "A dusty study, bathed in moonlight.",
+    "atmosphere": "Silent, eerie, a mixture of anticipation and unease."
+  },
+  "nggs_input_text": "With trembling hands, she turned the pages of the old diary."
+}
+The NDGSIntegration parser extracts information from these keys and converts it into a format that TextProcessor can use (a dictionary including initial_text, a characters list, a scene dictionary, etc.).  In v1.8, strict schema validation is not performed, but it checks for basic data types and the presence of keys. If there are deficiencies or inconsistencies, warning logs may be output, or an error may occur.
+7.2 Details of GLCAI Vocabulary Feedback and Output JSON Structure
+The GLCAIVocabularyFeedback class tracks how much of the registered vocabulary was used in the text generated by each NGGS-Lite job and outputs the results as a JSON file. This is intended to be a data source for GLCAI (Gothic Lexicon Curator AI or similar external vocabulary database/analysis systems) to evaluate vocabulary effectiveness based on actual generation examples or to discover new vocabulary candidates.
+Example structure of the output JSON file (nggs_vocab_feedback_<job_id>.json):
+JSON
+
+JSON
+
+{
+  "job_id": "nggsv18_20250523_001530_123456",
+  "timestamp_utc": "2025-05-22T15:15:30.123Z",
+  "nggs_version": "1.8.0",
+  "vocab_usage": {
+    "深淵": {
+      "count": 3,
+      "layers": ["psychological", "symbolic"],
+      "categories": ["ETI", "不確定性"],
+      "source": "glcai_export_latest.json"
+    },
+    "月光": {
+      "count": 5,
+      "layers": ["sensory", "physical"],
+      "categories": ["自然", "情景描写"],
+      "source": "gothic_vocabulary_v1.8.json"
+    },
+    // ... other occurring vocabulary
+  }
+}
+* `job_id`: The NGGS-Lite job ID this feedback corresponds to. [cite: 21]
+* `timestamp_utc`: The UTC time this feedback file was generated. [cite: 21]
+* `nggs_version`: The version of NGGS-Lite used. [cite: 21]
+* `vocab_usage`: A dictionary with the occurring word string as the key, and a dictionary containing its occurrence count (`count`), associated layers (`layers`), categories (`categories`), and vocabulary source (`source`) as the value. [cite: 21]
+This output can be useful for building more advanced vocabulary management systems in the future, such as automatically updating a vocabulary database or recommending effective vocabulary sets for specific themes or styles.
+
+Okay, here is Part 6 of the translation:
+
+NGGS-Lite Project Directory: /Users/user/Desktop/NGGS＿Project/
+7. Integration Features
+NGGS-Lite v1.8 includes basic features for integration with external systems.
+7.1 Details of NDGS Input and Expected JSON Structure
+NGGS-Lite v1.8, through the NDGSIntegration class, can accept a JSON file output from an external scenario construction system (assuming NDGS: Neo Dimension Gothic Scenario builder, etc.) as input and use it as the initial context for processing.
+Expected keys and extracted information:
+* character_definitions (dict, optional): Character definition information.
+* Key: Character ID (string).
+* Value (dict):
+* name (str, optional): Character name.
+* personality_summary (str, optional) or memo (str, optional): Overview of personality or settings.
+* scene_context (dict, optional): Scene context information.
+* scene_overview (str, optional): Scene overview.
+* atmosphere (str, optional): Scene atmosphere.
+* nggs_input_text (str, optional): The main text that serves as the starting point for NGGS-Lite processing.
+* dialogue_blocks (list, optional): A list of dialogue blocks. The text key of the first element in the list may be used as an alternative to nggs_input_text.
+Example of NDGS JSON input (minimum configuration):
+JSON
+
+JSON
+
+{
+  "character_definitions": {
+    "char001": {
+      "name": "Agatha",
+      "personality_summary": "A mysterious woman trapped in an old mansion. She seeks lost memories."
+    }
+  },
+  "scene_context": {
+    "scene_overview": "A dusty study, bathed in moonlight.",
+    "atmosphere": "Silent, eerie, a mixture of anticipation and unease."
+  },
+  "nggs_input_text": "With trembling hands, she turned the pages of the old diary."
+}
+The NDGSIntegration parser extracts information from these keys and converts it into a format that TextProcessor can use (a dictionary including initial_text, a characters list, a scene dictionary, etc.).  In v1.8, strict schema validation is not performed, but it checks for basic data types and the presence of keys. If there are deficiencies or inconsistencies, warning logs may be output, or an error may occur.
+7.2 Details of GLCAI Vocabulary Feedback and Output JSON Structure
+The GLCAIVocabularyFeedback class tracks how much of the registered vocabulary was used in the text generated by each NGGS-Lite job and outputs the results as a JSON file. This is intended to be a data source for GLCAI (Gothic Lexicon Curator AI or similar external vocabulary database/analysis systems) to evaluate vocabulary effectiveness based on actual generation examples or to discover new vocabulary candidates.
+Example structure of the output JSON file (nggs_vocab_feedback_<job_id>.json):
+JSON
+
+JSON
+
+{
+  "job_id": "nggsv18_20250523_001530_123456",
+  "timestamp_utc": "2025-05-22T15:15:30.123Z",
+  "nggs_version": "1.8.0",
+  "vocab_usage": {
+    "深淵": {
+      "count": 3,
+      "layers": ["psychological", "symbolic"],
+      "categories": ["ETI", "不確定性"],
+      "source": "glcai_export_latest.json"
+    },
+    "月光": {
+      "count": 5,
+      "layers": ["sensory", "physical"],
+      "categories": ["自然", "情景描写"],
+      "source": "gothic_vocabulary_v1.8.json"
+    },
+    // ... other occurring vocabulary
+  }
+}
+* `job_id`: The NGGS-Lite job ID this feedback corresponds to. [cite: 21]
+* `timestamp_utc`: The UTC time this feedback file was generated. [cite: 21]
+* `nggs_version`: The version of NGGS-Lite used. [cite: 21]
+* `vocab_usage`: A dictionary with the occurring word string as the key, and a dictionary containing its occurrence count (`count`), associated layers (`layers`), categories (`categories`), and vocabulary source (`source`) as the value. [cite: 21]
+This output can be useful for building more advanced vocabulary management systems in the future, such as automatically updating a vocabulary database or recommending effective vocabulary sets for specific themes or styles.
+
+9.Performance Considerations The execution performance of NGGS-Lite v1.8 is influenced by several factors. 9.1 Regarding Memory Usage
+Text Data Retention: When executing improvement loops, each version of the generated text and evaluation results are held in memory. Therefore, if the number of loops is high or the generated text length is very long, memory usage may increase.
+Vocabulary Data: Loading large vocabulary files can affect memory usage.
+Batch Processing: When processing many files in parallel with --max-workers, the overall peak memory usage may increase because each worker processes data independently.
+Countermeasures:
+Adjust settings to avoid generating extremely long texts or using an excessive number of improvement loops.
+When performing batch processing, set the number of --max-workers appropriately according to system memory.
+(In the current implementation of NGGS-Lite v1.8, advanced memory management features like selectively releasing older versions of text from memory, as mentioned in the v4.2 guide, are not explicitly implemented. This is a future improvement point.) 9.2 Regarding API Call Count and Cost NGGS-Lite v1.8 uses the Google Gemini API. API usage may incur costs based on the number of requests and processed tokens.
+Main places where API calls occur:
+Initial text generation (improvement loop 0).
+LLM-based evaluation (Evaluator.evaluate) in each improvement loop.
+Text regeneration using improvement instructions (LLMClient.generate) in each improvement loop.
+(In the future) When having the LLM generate improvement instructions themselves (_generate_llm_improvement_instructions).
+Factors that increase call count:
+The number of improvement loops specified with --loops.
+The number of files during batch processing.
+Factors affecting token count:
+The length of the text to be generated (--length or instructions within the prompt).
+The length of the prompt itself (which tends to get longer as loops progress because it includes context information, improvement instructions, and evaluation result feedback).
+Countermeasures/Considerations:
+During development and testing, set --loops to a small number and utilize the --mock option to save API calls.
+Appropriately adjust the generated text length and prompt content to suppress unnecessary token consumption.
+Periodically check Gemini API usage and costs on the Google Cloud Console, etc.
+GEMINI_RPM_LIMIT in NGGSConfig is a setting to prevent errors due to exceeding rate limits and does not directly reduce API costs, but it is important for stable operation. 9.3 Effects and Caveats of Batch Processing Parallelization When --max-workers is set to 2 or more in --batch mode, multiple input files can be processed in parallel.
+Effects:
+If CPU-bound processing (file I/O, some heuristic evaluations, etc.) and I/O-bound processing (API call wait times) are mixed, appropriate parallelization can potentially shorten the overall batch processing time.
+Caveats:
+API Rate Limit: Increasing the number of parallel processes increases the total number of API requests per unit of time, which can make it easier to hit the API's RPM (Requests Per Minute) limit. Consider the balance between GEMINI_RPM_LIMIT in NGGSConfig and --max-workers. If rate limits are frequently hit, it is necessary to reduce the number of workers or adjust the RPM limit value within the API provider's allowable range.
+CPU/Memory Resources: The more workers, the more CPU cores and memory resources are consumed. Configure so as not to exceed system resource limits.
+Availability of concurrent.futures: This feature depends on Python's concurrent.futures module. In environments where it is not available, a warning log will be output, and processing will fall back to sequential.
+Error Handling: Even if an error occurs in the processing of an individual file, other parallel processes are designed to continue, but the overall stability of the batch depends on the success rate of each file's processing.
+
+10.Future Outlook (Beyond v1.8) NGGS-Lite v1.8 provides a robust foundation for high-quality Gothic style text generation, but there is potential for further functional expansion and improvement.
+Deepening External Integration:
+Strengthening schema support for the NDGS input parser and utilizing more detailed context information.
+Expanding GLCAI vocabulary feedback functionality (e.g., extracting new vocabulary candidates from generated text, bidirectional integration).
+Advancing Evaluation and Improvement Logic:
+Continuous tuning of evaluation heuristics such as ETI, RI, and subjectivity, and introducing user customization of weights and criteria.
+Refining the improvement strategy decision logic and supporting more diverse improvement approaches.
+Introducing indicators to evaluate the logical structure and narrative development consistency of the text.
+User Interface and Usability Improvements:
+Full implementation of detailed and interactive HTML report functionality (comparison of each loop, visualization of evaluation scores, etc.).
+Enhancing the resume feature to allow resumption of processing at more granular steps.
+Providing comprehensive management of all settings via configuration files (YAML or JSON).
+Development of a Graphical User Interface (GUI).
+Expanding Generation Capabilities:
+Official support for other high-performance LLM engines like OpenAI (GPT series) and engine-specific optimization.
+Generation modes specialized for specific Gothic subgenres (e.g., cosmic horror, cyberpunk Gothic).
+Auxiliary functions for proposing/generating themes, plots, character archetypes, etc.
+Extensibility and Community:
+Considering an architecture that allows users to easily add their own evaluation modules or improvement strategy plugins.
+Supporting the formation of a sharing community for settings, prompt templates, vocabulary lists, etc.
+Performance and Resource Management:
+Further optimization of memory usage efficiency (e.g., selective unloading of older version text data).
+API call count optimization strategies (e.g., options to omit less critical evaluations). The NGGS-Lite project aims to continue exploring the possibilities of literary AI generation.
